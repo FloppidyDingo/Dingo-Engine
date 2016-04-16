@@ -33,7 +33,7 @@ public class Loader {
     *
     * Creates a Map object using the specified map data file.
      * @param url The filename of the map
-     * @param referenceURL Specifies the base folder for importing resources
+     * @param referenceURL Specifies the map folder
      * @return 
      * @throws management.InvalidVersionException 
     */
