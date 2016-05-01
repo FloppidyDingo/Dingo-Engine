@@ -765,6 +765,7 @@ public abstract class Physics {
     }
     
     private void liveCollision(){
+        //<editor-fold defaultstate="collapsed" desc="live collision mode">
         for (Entity e : doorTargetList) {
             for (Entity d : doorList) {
                 boolean[] c = e.intersects(d.getIv().getBoundsInParent());
@@ -812,29 +813,29 @@ public abstract class Physics {
             for(Entity e2 : doorList){
                 boolean intersect = true;
                 boolean[] c = e.intersects(e2.getIv().getBoundsInParent());
-                    if(c[0]){
-                        if(e.getDir().getY() < 0){
-                            e.getDir().setY(0);
-                        }
+                if(c[0]){
+                    if(e.getDir().getY() < 0){
+                        e.getDir().setY(0);
                     }
-                    if(c[1]){
-                        if(e.getDir().getY() > 0){
-                            e.getDir().setY(0);
-                        }
+                }
+                if(c[1]){
+                    if(e.getDir().getY() > 0){
+                        e.getDir().setY(0);
                     }
-                    if(c[2]){
-                        if(e.getDir().getX() < 0){
-                            e.getDir().setX(0);
-                        }
+                }
+                if(c[2]){
+                    if(e.getDir().getX() < 0){
+                        e.getDir().setX(0);
                     }
-                    if(c[3]){
-                        if(e.getDir().getX() > 0){
-                            e.getDir().setX(0);
-                        }
+                }
+                if(c[3]){
+                    if(e.getDir().getX() > 0){
+                        e.getDir().setX(0);
                     }
-                    if(!c[4]){
-                        collision(e, e2);
-                    }
+                }
+                if(!c[4]){
+                    collision(e, e2);
+                }
             }
         }
         for(Trigger t : triggerList){
@@ -844,12 +845,21 @@ public abstract class Physics {
                 }
             }
         }
+//</editor-fold>
     }
     
     private void predictionCollision(){
+        //<editor-fold defaultstate="collapsed" desc="predict collision">
         for (Entity e : doorTargetList) {
             for (Entity d : doorList) {
-                
+                if((predictCollision(e, d).getSide() > 0) & d.isActive()){
+                    for (Entity key : keyList) {
+                        if((d.getUserData() == key.getUserData()) & !key.isActive()){
+                            d.setVisible(false);
+                            d.setActive(false);
+                        }
+                    }
+                }
             }
         }
         for (Entity e : physList) {
@@ -857,24 +867,24 @@ public abstract class Physics {
                 if((!e.getID().equals(e2.getID()))){
                     CollisionBlock cb = predictCollision(e, e2);
                     switch(cb.getSide()){
-                        case 0:{
-                            
-                            break;
-                        }
                         case 1:{
                             e.getDir().setY(cb.getyDist());
+                            collision(e, e2);
                             break;
                         }
                         case 2:{
                             e.getDir().setY(-cb.getyDist());
+                            collision(e, e2);
                             break;
                         }
                         case 3:{
                             e.getDir().setX(cb.getxDist());
+                            collision(e, e2);
                             break;
                         }
                         case 4:{
                             e.getDir().setX(-cb.getxDist());
+                            collision(e, e2);
                             break;
                         }
                     }
@@ -883,14 +893,39 @@ public abstract class Physics {
         }
         for (Entity e : physList) {
             for(Entity e2 : doorList){
-                
+                CollisionBlock cb = predictCollision(e, e2);
+                switch(cb.getSide()){
+                    case 1:{
+                        e.getDir().setY(cb.getyDist());
+                        collision(e, e2);
+                        break;
+                    }
+                    case 2:{
+                        e.getDir().setY(-cb.getyDist());
+                        collision(e, e2);
+                        break;
+                    }
+                    case 3:{
+                        e.getDir().setX(cb.getxDist());
+                        collision(e, e2);
+                        break;
+                    }
+                    case 4:{
+                        e.getDir().setX(-cb.getxDist());
+                        collision(e, e2);
+                        break;
+                    }
+                }
             }
         }
         for(Trigger t : triggerList){
             for(Entity e : trigTargetList){
-                
+                if((!e.intersects(t.getBoundsInParent())[4]) & t.isEnabled()){
+                    t.fire();
+                }
             }
         }
+//</editor-fold>
     }
     
     public CollisionBlock predictCollision(Entity source, Entity target){
