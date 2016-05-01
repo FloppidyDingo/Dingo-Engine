@@ -23,7 +23,6 @@ public abstract class Engine {
     private static final int version = 1;
     private int fps;
     public Stage stage;
-    public int phyAcc;
     
     /**
      *reference this to modify the animation timer object
@@ -46,7 +45,6 @@ public abstract class Engine {
             }
         };
         fps = 60;
-        phyAcc = 120;
         animtimer.setInterval(1000/fps);
         animtimer.stop();
         stage = new Stage();

@@ -33,7 +33,7 @@ public abstract class Physics {
     private int mode;
     private int enemyRange;
     private double gravity;
-    private int maxGVelocity;
+    private double maxGVelocity;
 
     /**
      * the physics engine will run in platformer mode.
@@ -50,6 +50,9 @@ public abstract class Physics {
     private boolean trackcam;
     private Entity camTarget;
     private Double AISpeed;
+    private int collisionMode = 3;
+    public static final int LIVE_COLLISION = 2;
+    public static final int PREDICT_COLLISION = 3;
 
     /**
      *creates a new physics engine object 
@@ -513,19 +516,25 @@ public abstract class Physics {
      */
     public abstract void postTick();
 
-    public int getMaxGVelocity() {
+    public double getMaxGVelocity() {
         return maxGVelocity;
     }
 
-    public void setMaxGVelocity(int maxGVelocity) {
+    public void setTerminalVelocity(double maxGVelocity) {
         this.maxGVelocity = maxGVelocity;
+    }
+
+    public int getCollisionMode() {
+        return collisionMode;
+    }
+
+    public void setCollisionMode(int collisionMode) {
+        this.collisionMode = collisionMode;
     }
 
     /**
      *
      */
-    
-    
     public void check() {
         update();
         //<editor-fold defaultstate="collapsed" desc="spawner">
@@ -654,84 +663,10 @@ public abstract class Physics {
         }
 //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="Collisions (triggers, doors, solid entities">
-        for (Entity e : doorTargetList) {
-            for (Entity d : doorList) {
-                boolean[] c = e.intersects(d.getIv().getBoundsInParent());
-                if((!c[4]) & d.isActive()){
-                    for (Entity key : keyList) {
-                        if((d.getUserData() == key.getUserData()) & !key.isActive()){
-                            d.setVisible(false);
-                            d.setActive(false);
-                        }
-                    }
-                }
-            }
-        }
-        for (Entity e : physList) {
-            for(Entity e2 : physList){
-                if((!e.getID().equals(e2.getID()))){
-                    boolean[] c = e.intersects(e2.getIv().getBoundsInParent());
-                    if(c[0]){
-                        if(e.getDir().getY() < 0){
-                            e.getDir().setY(0);
-                        }
-                    }
-                    if(c[1]){
-                        if(e.getDir().getY() > 0){
-                            e.getDir().setY(0);
-                        }
-                    }
-                    if(c[2]){
-                        if(e.getDir().getX() < 0){
-                            e.getDir().setX(0);
-                        }
-                    }
-                    if(c[3]){
-                        if(e.getDir().getX() > 0){
-                            e.getDir().setX(0);
-                        }
-                    }
-                    if(!c[4]){
-                        collision(e, e2);
-                    }
-                }
-            }
-        }
-        for (Entity e : physList) {
-            for(Entity e2 : doorList){
-                boolean intersect = true;
-                boolean[] c = e.intersects(e2.getIv().getBoundsInParent());
-                    if(c[0]){
-                        if(e.getDir().getY() < 0){
-                            e.getDir().setY(0);
-                        }
-                    }
-                    if(c[1]){
-                        if(e.getDir().getY() > 0){
-                            e.getDir().setY(0);
-                        }
-                    }
-                    if(c[2]){
-                        if(e.getDir().getX() < 0){
-                            e.getDir().setX(0);
-                        }
-                    }
-                    if(c[3]){
-                        if(e.getDir().getX() > 0){
-                            e.getDir().setX(0);
-                        }
-                    }
-                    if(!c[4]){
-                        collision(e, e2);
-                    }
-            }
-        }
-        for(Trigger t : triggerList){
-            for(Entity e : trigTargetList){
-                if((!e.intersects(t.getBoundsInParent())[4]) & t.isEnabled()){
-                    t.fire();
-                }
-            }
+        if(collisionMode == LIVE_COLLISION){
+            liveCollision();
+        }else if(collisionMode == PREDICT_COLLISION){
+            predictionCollision();
         }
 //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="camera movement">
@@ -827,5 +762,384 @@ public abstract class Physics {
         }
 //</editor-fold>
         postTick();
+    }
+    
+    private void liveCollision(){
+        for (Entity e : doorTargetList) {
+            for (Entity d : doorList) {
+                boolean[] c = e.intersects(d.getIv().getBoundsInParent());
+                if((!c[4]) & d.isActive()){
+                    for (Entity key : keyList) {
+                        if((d.getUserData() == key.getUserData()) & !key.isActive()){
+                            d.setVisible(false);
+                            d.setActive(false);
+                        }
+                    }
+                }
+            }
+        }
+        for (Entity e : physList) {
+            for(Entity e2 : physList){
+                if((!e.getID().equals(e2.getID()))){
+                    boolean[] c = e.intersects(e2.getIv().getBoundsInParent());
+                    if(c[0]){
+                        if(e.getDir().getY() < 0){
+                            e.getDir().setY(0);
+                        }
+                    }
+                    if(c[1]){
+                        if(e.getDir().getY() > 0){
+                            e.getDir().setY(0);
+                        }
+                    }
+                    if(c[2]){
+                        if(e.getDir().getX() < 0){
+                            e.getDir().setX(0);
+                        }
+                    }
+                    if(c[3]){
+                        if(e.getDir().getX() > 0){
+                            e.getDir().setX(0);
+                        }
+                    }
+                    if(!c[4]){
+                        collision(e, e2);
+                    }
+                }
+            }
+        }
+        for (Entity e : physList) {
+            for(Entity e2 : doorList){
+                boolean intersect = true;
+                boolean[] c = e.intersects(e2.getIv().getBoundsInParent());
+                    if(c[0]){
+                        if(e.getDir().getY() < 0){
+                            e.getDir().setY(0);
+                        }
+                    }
+                    if(c[1]){
+                        if(e.getDir().getY() > 0){
+                            e.getDir().setY(0);
+                        }
+                    }
+                    if(c[2]){
+                        if(e.getDir().getX() < 0){
+                            e.getDir().setX(0);
+                        }
+                    }
+                    if(c[3]){
+                        if(e.getDir().getX() > 0){
+                            e.getDir().setX(0);
+                        }
+                    }
+                    if(!c[4]){
+                        collision(e, e2);
+                    }
+            }
+        }
+        for(Trigger t : triggerList){
+            for(Entity e : trigTargetList){
+                if((!e.intersects(t.getBoundsInParent())[4]) & t.isEnabled()){
+                    t.fire();
+                }
+            }
+        }
+    }
+    
+    private void predictionCollision(){
+        for (Entity e : doorTargetList) {
+            for (Entity d : doorList) {
+                
+            }
+        }
+        for (Entity e : physList) {
+            for(Entity e2 : physList){
+                if((!e.getID().equals(e2.getID()))){
+                    CollisionBlock cb = predictCollision(e, e2);
+                    switch(cb.getSide()){
+                        case 0:{
+                            
+                            break;
+                        }
+                        case 1:{
+                            e.getDir().setY(cb.getyDist());
+                            break;
+                        }
+                        case 2:{
+                            e.getDir().setY(-cb.getyDist());
+                            break;
+                        }
+                        case 3:{
+                            e.getDir().setX(cb.getxDist());
+                            break;
+                        }
+                        case 4:{
+                            e.getDir().setX(-cb.getxDist());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        for (Entity e : physList) {
+            for(Entity e2 : doorList){
+                
+            }
+        }
+        for(Trigger t : triggerList){
+            for(Entity e : trigTargetList){
+                
+            }
+        }
+    }
+    
+    public CollisionBlock predictCollision(Entity source, Entity target){
+        CollisionBlock cb = new CollisionBlock();
+        cb.setSide(0);
+        Vector v = source.getDir();
+        int YAxis = 0;// 0 none, 1 up, 2 down
+        int XAxis = 0;// 0 none, 1 left, 2 right
+        double x = source.getIv().getTranslateX();
+        double y = source.getIv().getTranslateY();
+        
+        if(v.getX() == 0){
+            XAxis = 0;
+        }else if(v.getX() < 0){
+            XAxis = 1;
+        }else{
+            XAxis = 2;
+        }
+        if(v.getY() == 0){
+            YAxis = 0;
+        }else if(v.getY() < 0){
+            YAxis = 1;
+        }else{
+            YAxis = 2;
+        }
+        
+        if((XAxis == 0) & (YAxis == 0)){//no movement
+            return cb;
+        }
+        if((XAxis == 1) & (YAxis == 0)){//straight left
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getWidth() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getHeight(); i2++) {
+                for (int i = 0; -i > v.getX(); i++) {
+                    double py = y + i2;
+                    double px = x - i;
+                    double bx1 = target.getR4().getTranslateX() - (target.getR4().getWidth() / 2);
+                    double by1 = target.getR4().getTranslateY() - (target.getR4().getHeight() / 2);
+                    double bx2 = target.getR4().getTranslateX() + (target.getR4().getWidth() / 2);
+                    double by2 = target.getR4().getTranslateY() + (target.getR4().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(4);
+                        cb.setxDist(i);
+                        break;
+                    }
+                }
+            }
+        }
+        if((XAxis == 2) & (YAxis == 0)){//straight right
+            x = source.getIv().getTranslateX() + (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getHeight(); i2++) {
+                for (int i = 0; i < v.getX(); i++) {
+                    double py = y + i2;
+                    double px = x + i;
+                    double bx1 = target.getR3().getTranslateX() - (target.getR3().getWidth() / 2);
+                    double by1 = target.getR3().getTranslateY() - (target.getR3().getHeight() / 2);
+                    double bx2 = target.getR3().getTranslateX() + (target.getR3().getWidth() / 2);
+                    double by2 = target.getR3().getTranslateY() + (target.getR3().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(3);
+                        cb.setxDist(i);
+                        break;
+                    }
+                }
+            }
+        }
+        if((XAxis == 0) & (YAxis == 1)){//straight up
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getWidth(); i2++) {
+                for (int i = 0; -i > v.getY(); i++) {
+                    double py = y - i;
+                    double px = x + i2;
+                    double bx1 = target.getR2().getTranslateX() - (target.getR2().getWidth() / 2);
+                    double by1 = target.getR2().getTranslateY() - (target.getR2().getHeight() / 2);
+                    double bx2 = target.getR2().getTranslateX() + (target.getR2().getWidth() / 2);
+                    double by2 = target.getR2().getTranslateY() + (target.getR2().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(2);
+                        cb.setyDist(i);
+                        break;
+                    }
+                }
+            }
+        }
+        if((XAxis == 1) & (YAxis == 1)){//up left
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getWidth(); i2++) {
+                for (int i = 0; -i > v.getY(); i++) {
+                    double py = y - i;
+                    double px = x + i2;
+                    double bx1 = target.getR2().getTranslateX() - (target.getR2().getWidth() / 2);
+                    double by1 = target.getR2().getTranslateY() - (target.getR2().getHeight() / 2);
+                    double bx2 = target.getR2().getTranslateX() + (target.getR2().getWidth() / 2);
+                    double by2 = target.getR2().getTranslateY() + (target.getR2().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(2);
+                        cb.setyDist(i);
+                        break;
+                    }
+                }
+            }
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getWidth() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getHeight(); i2++) {
+                for (int i = 0; -i > v.getX(); i++) {
+                    double py = y + i2;
+                    double px = x - i;
+                    double bx1 = target.getR4().getTranslateX() - (target.getR4().getWidth() / 2);
+                    double by1 = target.getR4().getTranslateY() - (target.getR4().getHeight() / 2);
+                    double bx2 = target.getR4().getTranslateX() + (target.getR4().getWidth() / 2);
+                    double by2 = target.getR4().getTranslateY() + (target.getR4().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(4);
+                        cb.setxDist(i);
+                        break;
+                    }
+                }
+            }
+        }
+        if((XAxis == 2) & (YAxis == 1)){//up right
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getWidth(); i2++) {
+                for (int i = 0; -i > v.getY(); i++) {
+                    double py = y - i;
+                    double px = x + i2;
+                    double bx1 = target.getR2().getTranslateX() - (target.getR2().getWidth() / 2);
+                    double by1 = target.getR2().getTranslateY() - (target.getR2().getHeight() / 2);
+                    double bx2 = target.getR2().getTranslateX() + (target.getR2().getWidth() / 2);
+                    double by2 = target.getR2().getTranslateY() + (target.getR2().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(2);
+                        cb.setyDist(i);
+                        break;
+                    }
+                }
+            }
+            x = source.getIv().getTranslateX() + (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getHeight(); i2++) {
+                for (int i = 0; i < v.getX(); i++) {
+                    double py = y + i2;
+                    double px = x + i;
+                    double bx1 = target.getR3().getTranslateX() - (target.getR3().getWidth() / 2);
+                    double by1 = target.getR3().getTranslateY() - (target.getR3().getHeight() / 2);
+                    double bx2 = target.getR3().getTranslateX() + (target.getR3().getWidth() / 2);
+                    double by2 = target.getR3().getTranslateY() + (target.getR3().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(3);
+                        cb.setxDist(i);
+                        break;
+                    }
+                }
+            }
+        }
+        if((XAxis == 0) & (YAxis == 2)){//straight down
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() + (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getWidth(); i2++) {
+                for (int i = 0; i < v.getY(); i++) {
+                    double py = y + i;
+                    double px = x + i2;
+                    double bx1 = target.getR1().getTranslateX() - (target.getR1().getWidth() / 2);
+                    double by1 = target.getR1().getTranslateY() - (target.getR1().getHeight() / 2);
+                    double bx2 = target.getR1().getTranslateX() + (target.getR1().getWidth() / 2);
+                    double by2 = target.getR1().getTranslateY() + (target.getR1().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(1);
+                        cb.setyDist(i);
+                        break;
+                    }
+                }
+            }
+        }
+        if((XAxis == 1) & (YAxis == 2)){//down left
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() + (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getWidth(); i2++) {
+                for (int i = 0; i < v.getY(); i++) {
+                    double py = y + i;
+                    double px = x + i2;
+                    double bx1 = target.getR1().getTranslateX() - (target.getR1().getWidth() / 2);
+                    double by1 = target.getR1().getTranslateY() - (target.getR1().getHeight() / 2);
+                    double bx2 = target.getR1().getTranslateX() + (target.getR1().getWidth() / 2);
+                    double by2 = target.getR1().getTranslateY() + (target.getR1().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(1);
+                        cb.setyDist(i);
+                        break;
+                    }
+                }
+            }
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getWidth() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getHeight(); i2++) {
+                for (int i = 0; -i > v.getX(); i++) {
+                    double py = y + i2;
+                    double px = x - i;
+                    double bx1 = target.getR4().getTranslateX() - (target.getR4().getWidth() / 2);
+                    double by1 = target.getR4().getTranslateY() - (target.getR4().getHeight() / 2);
+                    double bx2 = target.getR4().getTranslateX() + (target.getR4().getWidth() / 2);
+                    double by2 = target.getR4().getTranslateY() + (target.getR4().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(4);
+                        cb.setxDist(i);
+                        break;
+                    }
+                }
+            }
+        }
+        if((XAxis == 2) & (YAxis == 2)){//down right
+            x = source.getIv().getTranslateX() - (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() + (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getWidth(); i2++) {
+                for (int i = 0; i < v.getY(); i++) {
+                    double py = y + i;
+                    double px = x + i2;
+                    double bx1 = target.getR1().getTranslateX() - (target.getR1().getWidth() / 2);
+                    double by1 = target.getR1().getTranslateY() - (target.getR1().getHeight() / 2);
+                    double bx2 = target.getR1().getTranslateX() + (target.getR1().getWidth() / 2);
+                    double by2 = target.getR1().getTranslateY() + (target.getR1().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(1);
+                        cb.setyDist(i);
+                        break;
+                    }
+                }
+            }
+            x = source.getIv().getTranslateX() + (source.getIv().getViewport().getHeight() / 2);
+            y = source.getIv().getTranslateY() - (source.getIv().getViewport().getHeight() / 2);
+            for (int i2 = 0; i2 < source.getIv().getViewport().getHeight(); i2++) {
+                for (int i = 0; i < v.getX(); i++) {
+                    double py = y + i2;
+                    double px = x + i;
+                    double bx1 = target.getR3().getTranslateX() - (target.getR3().getWidth() / 2);
+                    double by1 = target.getR3().getTranslateY() - (target.getR3().getHeight() / 2);
+                    double bx2 = target.getR3().getTranslateX() + (target.getR3().getWidth() / 2);
+                    double by2 = target.getR3().getTranslateY() + (target.getR3().getHeight() / 2);
+                    if (((px > bx1) & (px < bx2) & (py > by1) & (py < by2))) {
+                        cb.setSide(3);
+                        cb.setxDist(i);
+                        break;
+                    }
+                }
+            }
+        }
+        return cb;
     }
 }
