@@ -34,10 +34,11 @@ public class Loader {
     * Creates a Map object using the specified map data file.
      * @param url The filename of the map
      * @param referenceURL Specifies the map folder
+     * @param imageURL
      * @return 
      * @throws management.InvalidVersionException 
     */
-    public Map generateMap(String url, String referenceURL) throws InvalidVersionException{
+    public Map generateMap(String url, String referenceURL, String imageURL) throws InvalidVersionException{
         ObservableList<targetBuffer> targets = FXCollections.observableArrayList();
         Map map = new Map();
         try (BufferedReader br = new BufferedReader(new FileReader(new File(referenceURL + url)))) {
@@ -265,7 +266,7 @@ public class Loader {
                     case "skin":{
                         Skin sk = new Skin();
                         sk.setID(br.readLine());
-                        sk.setBaseImage(new ImageView(new Image(new File(referenceURL + br.readLine()).toURI().toString())));
+                        sk.setBaseImage(new ImageView(new Image(new File(imageURL + br.readLine()).toURI().toString())));
                         cmd = br.readLine();
                         while(!"end".equals(cmd)){//skin viewports
                             double x1 = Integer.parseInt(cmd);

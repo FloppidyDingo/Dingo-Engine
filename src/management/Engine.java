@@ -4,6 +4,7 @@
  */
 package management;
 
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -20,8 +21,9 @@ import objects.Spawn;
  */
 public abstract class Engine {
     private static final int MapVersion = 1;
-    private static final int version = 1;
+    private static final String version = "1.1.7";
     private int fps;
+    private ObservableList<Extension> extensions;
     public Stage stage;
     
     /**
@@ -38,15 +40,15 @@ public abstract class Engine {
      *call this to start the engine
      */
     public void start() {
-        this.animtimer = new Timer(version) {
+        fps = 60;
+        this.animtimer = new Timer(1000/fps) {
             @Override
             public void action() {
                 frame2();
             }
         };
-        fps = 60;
-        animtimer.setInterval(1000/fps);
         animtimer.stop();
+        extensions = javafx.collections.FXCollections.emptyObservableList();
         stage = new Stage();
         Scene s = new Scene(new Pane(), 500, 500);
         stage.setScene(s);
@@ -63,21 +65,33 @@ public abstract class Engine {
             @Override
             public void preTick() {
                 frame();
+                for (Extension extension : extensions) {
+                    extension.frame();
+                }
             }
 
             @Override
             public void postTick() {
                 postPhysicsTick();
+                for (Extension extension : extensions) {
+                    extension.postPhysicsTick();
+                }
             }
             
             @Override
             public void collision(Entity e1, Entity e2) {
                 onCollision(e1, e2);
+                for (Extension extension : extensions) {
+                    extension.onCollision(e1, e2);
+                }
             }
 
             @Override
             public void spawn(Spawn spawn, Entity e) {
                 onSpawning(spawn, e);
+                for (Extension extension : extensions) {
+                    extension.onSpawning(spawn, e);
+                }
             }
         };
     }
@@ -158,8 +172,18 @@ public abstract class Engine {
      *returns the engine's version
      * @return
      */
-    public static int getVersion() {
+    public static String getVersion() {
         return version;
     }
     
+    public void addExtension(Extension ext){
+        extensions.add(ext);
+        ext.setEngine(this);
+        ext.init();
+    }
+    
+    public void removeExtension(Extension ext){
+        extensions.remove(ext);
+        ext.detach();
+    }
 }
