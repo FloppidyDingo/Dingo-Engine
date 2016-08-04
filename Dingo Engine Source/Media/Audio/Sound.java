@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package audio;
+package Media.Audio;
 
 import java.net.URL;
 import javafx.collections.FXCollections;

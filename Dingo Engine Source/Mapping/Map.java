@@ -86,8 +86,125 @@ public class Map {
         this.doorTargetList = FXCollections.observableArrayList();
     }
     
+    public Entity getEntity(String ID){
+        for (Entity col : entityList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Entity getObject(String ID){
+        for (Entity col : objectList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Person getPerson(String ID){
+        for (Person col : personList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Person getPerson2(String ID){
+        for (Person col : personList2) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Person getEnemy(String ID){
+        for (Person col : enemyList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Trigger getTrigger(String ID){
+        for (Trigger col : triggerList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Entity getDoor(String ID){
+        for (Entity col : doorList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Entity getKey(String ID){
+        for (Entity col : keyList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Spawn getSpawn(String ID){
+        for (Spawn col : spawnList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Skin getSkin(String ID){
+        for (Skin col : skinList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Animation getAnimation(String ID){
+        for (Animation col : animationList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Entity getTrigTarget(String ID){
+        for (Entity col : trigTargetList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Entity getDoorTarget(String ID){
+        for (Entity col : doorTargetList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
     /**
-     *returns the map's scene (must call compileScene() first)
+     * returns the map's scene (must call compileScene() first, or you will get null)
      * @return the scene generated from a map
      */
     public Scene getScene() {
@@ -166,8 +283,10 @@ public class Map {
         this.spawnList = spawnList;
     }
     
+    
+    
     /**
-     *generates a scene with the map data
+     * generates a scene with the map data
      * @param WindowSizeX
      * @param WindowSizeY
      * @return The compiled scene
