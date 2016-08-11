@@ -46,6 +46,10 @@ public abstract class Extension {
      */
     public abstract void detach();
     
+    public abstract void KeyReleased(String key);
+    
+    public abstract void KeyPressed(String key);
+    
     protected void setEngine(Engine e){
         this.engine = e;
     }

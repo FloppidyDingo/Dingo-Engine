@@ -5,7 +5,7 @@
 package management;
 
 import Media.AdvancedMedia.Audio.DingoSoundDriver;
-import Media.MediaPipeline;
+import Media.AdvancedMedia.MediaPipeline;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -49,7 +49,7 @@ public abstract class Engine {
     /**
      *call this to start the engine
      */
-    public void preInit() {
+    public void start() {
         fps = 60;
         this.animtimer = new Timer(1000/fps) {
             @Override
@@ -58,18 +58,17 @@ public abstract class Engine {
             }
         };
         animtimer.stop();
-        extensions = javafx.collections.FXCollections.emptyObservableList();
-        keys = javafx.collections.FXCollections.emptyObservableList();
+        extensions = javafx.collections.FXCollections.observableArrayList();
+        keys = javafx.collections.FXCollections.observableArrayList();
         stage = new Stage();
         Scene s = new Scene(new Pane(), 500, 500);
         stage.setScene(s);
         stage.show();
         stage.setOnCloseRequest(new EventHandler() {
-
-                @Override
-                public void handle(Event event) {
-                    System.exit(0);
-                }
+            @Override
+            public void handle(Event event) {
+                System.exit(0);
+            }
         });
         
         phy = new Physics() {
@@ -107,12 +106,14 @@ public abstract class Engine {
             }
         };
         
+        this.init();
+    }
+    
+    public void beginMediaSystem(int sampleRate, int bitDepth){
         media = new MediaPipeline();
         DingoSoundDriver DSD = new DingoSoundDriver();
-        DSD.init(44100, 16, 735);
+        DSD.init(sampleRate, bitDepth, (sampleRate / fps) * (bitDepth / 8));
         media.setAudio(DSD);
-        
-        this.init();
     }
     
     /**
@@ -167,7 +168,9 @@ public abstract class Engine {
     private void frame2(){
         phy.check();
         Animation.nextFrames();
-        media.process();
+        if(media != null){
+            media.process();
+        }
         TimeQueue.masterCheck();
     }
     
@@ -238,6 +241,9 @@ public abstract class Engine {
                 for (KeyMap key : keys) {
                     if(event.getCode() == key.getCode()){
                         KeyPressed(key.getKey());
+                        for (Extension ext : extensions) {
+                            ext.KeyPressed(key.getKey());
+                        }
                     }
                 }
             }
@@ -248,6 +254,9 @@ public abstract class Engine {
                 for (KeyMap key : keys) {
                     if(event.getCode() == key.getCode()){
                         KeyReleased(key.getKey());
+                        for (Extension ext : extensions) {
+                            ext.KeyReleased(key.getKey());
+                        }
                     }
                 }
             }
