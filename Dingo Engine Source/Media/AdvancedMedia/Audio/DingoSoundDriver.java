@@ -5,15 +5,13 @@
  */
 package Media.AdvancedMedia.Audio;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
 /**
  *
@@ -24,57 +22,52 @@ public class DingoSoundDriver extends AudioDriver{
     private Clip clip;
     private AudioFormat af; 
     private byte[] buf;
+    private SourceDataLine line;
     
     @Override
     public void update(){
+        for (int i = 0; i < buf.length; i++) {
+            buf[i] = 0;
+        }
+        if(input == null){
+            return;
+        }
+        if(input.getData() == null){
+            return;
+        }
         int[] in = input.getData();
-        if (clip != null) {
-            clip.stop();
-            clip.close();
-        }else{
-            try{
-                clip = AudioSystem.getClip();
-            }catch (LineUnavailableException ex) {
-                Logger.getLogger(DingoSoundDriver.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        for (int i = 0; i < in.length; i++) {
+            float j = in[i];
+            buf[i] = (byte)((float)j * volume);
         }
-        int[] LC = new int[in.length / 2];
-        int[] RC = new int[in.length / 2];
-        for(int i = 0; i < in.length; i += 2){
-            LC[i / 2] = in[i];
-            RC[i / 2] = in[i + 1];
-        }
-        for (int i = 0; i < buf.length / 2; i++) {
-            buf[2 * i] = (byte)(LC[i] * volume);
-            buf[(2 * i) + 1] = (byte)(RC[i] * volume);
-        }
-        try{
-            AudioInputStream stream = new AudioInputStream(new ByteArrayInputStream(buf), af, buf.length/2 );
-            clip.open(stream);
-            clip.start();
-        }catch(LineUnavailableException | IOException e) {
-            e.printStackTrace();
-        }
+        line.write(buf, 0, buf.length);
     }
     
     @Override
     public void stop(){
-        if(clip == null){
-            try {
-                clip = AudioSystem.getClip();
-            } catch (LineUnavailableException ex) {
-                Logger.getLogger(DingoSoundDriver.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if(line != null){
+            line.stop();
+            line.close();
         }
-        clip.stop();
-        clip.close();
     }
 
     @Override
     public void init(int SampleRate, int bitDepth, int bufferSize) {
         this.sampleRate = SampleRate;
-        this.volume = 127;
-        this.af = new AudioFormat(sampleRate, bitDepth, 2, true, false);///sample rate, bit depth, channels, signed, big endian
+        this.volume = 1;
+        this.af = new AudioFormat(sampleRate, bitDepth, 2, false, true);///sample rate, bit depth, channels, signed, big endian
         buf = new byte[bufferSize * 2];
+        try {
+            line = AudioSystem.getSourceDataLine(af);
+            line.open(af, bufferSize * 2);
+            line.start();
+        } catch (LineUnavailableException ex) {
+            Logger.getLogger(DingoSoundDriver.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+
+    public int getSampleRate() {
+        return sampleRate;
+    }
+    
 }

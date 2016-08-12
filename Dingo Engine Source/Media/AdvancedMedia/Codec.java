@@ -16,7 +16,7 @@ public abstract class Codec {
     
     public Connector out;
     public ObservableList<Connector> in;
-    private int order;
+    protected int order;
 
     public Codec() {
         this.out = new Connector();

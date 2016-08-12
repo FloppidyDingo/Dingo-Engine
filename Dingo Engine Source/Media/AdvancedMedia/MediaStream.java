@@ -55,6 +55,7 @@ public class MediaStream extends Codec{
                     if (i2 == -1) {
                         br.close();
                         open = false;
+                        break;
                     } else {
                         buffer[i] = i2;
                     }

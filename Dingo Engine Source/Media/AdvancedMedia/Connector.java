@@ -17,7 +17,8 @@ public class Connector {
     }
 
     public void setData(int[] data) {
-        this.data = data;
+        this.data = new int[data.length];
+        System.arraycopy(data, 0, this.data, 0, data.length);
     }
     
 }

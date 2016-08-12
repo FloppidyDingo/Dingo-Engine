@@ -5,6 +5,7 @@
  */
 package Media.AdvancedMedia.Audio;
 
+import Media.AdvancedMedia.Codec;
 import Media.AdvancedMedia.Connector;
 
 /**
@@ -30,4 +31,9 @@ public abstract class AudioDriver {
     public void setVolume(float volume) {
         this.volume = volume;
     }
+
+    public void link(Codec source) {
+        this.input = source.getOut();
+    }
+    
 }
