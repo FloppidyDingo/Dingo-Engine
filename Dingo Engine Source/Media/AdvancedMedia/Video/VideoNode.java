@@ -5,7 +5,7 @@
  */
 package Media.AdvancedMedia.Video;
 
-import Media.AdvancedMedia.Connector;
+import Media.Connector;
 import javafx.scene.image.ImageView;
 
 /**

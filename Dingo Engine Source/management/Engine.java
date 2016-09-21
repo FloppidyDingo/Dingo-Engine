@@ -5,7 +5,7 @@
 package management;
 
 import Media.AdvancedMedia.Audio.DingoSoundDriver;
-import Media.AdvancedMedia.MediaPipeline;
+import Media.MediaPipeline;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -77,7 +77,10 @@ public abstract class Engine {
             public void preTick() {
                 frame();
                 extensions.stream().forEach((extension) -> {
-                    extension.frame();
+                    if(extension.isEnabled()){
+                        extension.frame();
+                    }
+                    
                 });
             }
 
@@ -85,7 +88,9 @@ public abstract class Engine {
             public void postTick() {
                 postPhysicsTick();
                 extensions.stream().forEach((extension) -> {
-                    extension.postPhysicsTick();
+                    if(extension.isEnabled()){
+                        extension.postPhysicsTick();
+                    }
                 });
             }
             
@@ -93,7 +98,9 @@ public abstract class Engine {
             public void collision(Entity e1, Entity e2) {
                 onCollision(e1, e2);
                 extensions.stream().forEach((extension) -> {
-                    extension.onCollision(e1, e2);
+                    if(extension.isEnabled()){
+                        extension.onCollision(e1, e2);
+                    }
                 });
             }
 
@@ -101,11 +108,12 @@ public abstract class Engine {
             public void spawn(Spawn spawn, Entity e) {
                 onSpawning(spawn, e);
                 extensions.stream().forEach((extension) -> {
-                    extension.onSpawning(spawn, e);
+                    if(extension.isEnabled()){
+                        extension.onSpawning(spawn, e);
+                    }
                 });
             }
         };
-        
         this.init();
     }
     
@@ -241,9 +249,9 @@ public abstract class Engine {
                 for (KeyMap key : keys) {
                     if(event.getCode() == key.getCode()){
                         KeyPressed(key.getKey());
-                        for (Extension ext : extensions) {
+                        extensions.stream().filter((ext) -> (ext.isEnabled())).forEach((ext) -> {
                             ext.KeyPressed(key.getKey());
-                        }
+                        });
                     }
                 }
             }
@@ -254,9 +262,9 @@ public abstract class Engine {
                 for (KeyMap key : keys) {
                     if(event.getCode() == key.getCode()){
                         KeyReleased(key.getKey());
-                        for (Extension ext : extensions) {
+                        extensions.stream().filter((ext) -> (ext.isEnabled())).forEach((ext) -> {
                             ext.KeyReleased(key.getKey());
-                        }
+                        });
                     }
                 }
             }

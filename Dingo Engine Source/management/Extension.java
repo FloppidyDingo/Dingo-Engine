@@ -14,6 +14,7 @@ import objects.Spawn;
  */
 public abstract class Extension {
     public Engine engine;
+    private boolean enabled;
     
     public abstract void frame();
     
@@ -53,4 +54,9 @@ public abstract class Extension {
     protected void setEngine(Engine e){
         this.engine = e;
     }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
 }

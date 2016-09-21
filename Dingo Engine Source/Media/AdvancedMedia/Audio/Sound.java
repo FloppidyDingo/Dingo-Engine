@@ -5,7 +5,7 @@
  */
 package Media.AdvancedMedia.Audio;
 
-import Media.AdvancedMedia.Codec;
+import Media.Codec;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

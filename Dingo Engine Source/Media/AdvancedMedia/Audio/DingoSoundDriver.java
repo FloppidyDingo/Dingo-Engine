@@ -55,7 +55,7 @@ public class DingoSoundDriver extends AudioDriver{
     public void init(int SampleRate, int bitDepth, int bufferSize) {
         this.sampleRate = SampleRate;
         this.volume = 1;
-        this.af = new AudioFormat(sampleRate, bitDepth, 2, false, true);///sample rate, bit depth, channels, signed, big endian
+        this.af = new AudioFormat(sampleRate, bitDepth, 2, true, false);///sample rate, bit depth, channels, signed, little endian
         buf = new byte[bufferSize * 2];
         try {
             line = AudioSystem.getSourceDataLine(af);

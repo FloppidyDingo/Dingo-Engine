@@ -5,8 +5,10 @@
  */
 package Media.AdvancedMedia.Audio;
 
-import Media.AdvancedMedia.Codec;
-import Media.AdvancedMedia.Connector;
+import Media.Codec;
+import Media.Connector;
+
+
 
 /**
  *
