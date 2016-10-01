@@ -192,8 +192,8 @@ public class Entity {
         r3.setFill(Paint.valueOf("red"));
         r4.setFill(Paint.valueOf("red"));
         showRectangles(false);
-        this.setTranslateX(x);
-        this.setTranslateY(y);
+        this.setX(x);
+        this.setY(y);
     }
     
     /**
@@ -212,8 +212,8 @@ public class Entity {
         r3.setFill(Paint.valueOf("red"));
         r4.setFill(Paint.valueOf("red"));
         showRectangles(false);
-        this.setTranslateX(x);
-        this.setTranslateY(y);
+        this.setX(x);
+        this.setY(y);
         skin = s;
     }
     
@@ -237,7 +237,7 @@ public class Entity {
      *Sets the x coordinate of the Entity.
      * @param d
      */
-    public void setTranslateX(double d){
+    public void setX(double d){
         try {
             iv.setTranslateX(d);
             r1.setTranslateX(iv.getTranslateX());
@@ -254,10 +254,10 @@ public class Entity {
     }
     
     /**
-     *Sets the x coordinate of the Entity.
+     *Sets the y coordinate of the Entity.
      * @param d
      */
-    public void setTranslateY(double d){
+    public void setY(double d){
         try {
             iv.setTranslateY(d);
             r1.setTranslateY(iv.getTranslateY() - (currentView.getHeight() / 2));
@@ -462,7 +462,7 @@ public class Entity {
      *
      * @return The x coordinate of the Entity.
      */
-    public double getTranslateX() {
+    public double getX() {
         return iv.getTranslateX();
     }
 
@@ -470,24 +470,8 @@ public class Entity {
      *
      * @return The y coordinate of the Entity.
      */
-    public double getTranslateY() {
+    public double getY() {
         return iv.getTranslateY();
-    }
-
-    public double getBx() {
-        return bx;
-    }
-
-    public void setBx(double bx) {
-        this.bx = bx;
-    }
-
-    public double getBy() {
-        return by;
-    }
-
-    public void setBy(double by) {
-        this.by = by;
     }
     
 }

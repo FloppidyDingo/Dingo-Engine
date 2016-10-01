@@ -68,8 +68,8 @@ public class Person extends Entity{
     public Person(Skin s, double x, double y) {
         super(s);
         resetRectangles();
-        this.setTranslateX(x);
-        this.setTranslateY(y);
+        this.setX(x);
+        this.setY(y);
     }
     
     /**
@@ -82,8 +82,8 @@ public class Person extends Entity{
     public Person(Skin s, double x, double y, String type) {
         super(s);
         resetRectangles();
-        this.setTranslateX(x);
-        this.setTranslateY(y);
+        this.setX(x);
+        this.setY(y);
         this.type = type;
     }
     
@@ -98,8 +98,8 @@ public class Person extends Entity{
     public Person(Skin s, double x, double y, String type, int health) {
         super(s);
         resetRectangles();
-        this.setTranslateX(x);
-        this.setTranslateY(y);
+        this.setX(x);
+        this.setY(y);
         this.type = type;
         this.health = health;
     }
