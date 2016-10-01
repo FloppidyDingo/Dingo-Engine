@@ -2,9 +2,14 @@
 
 package management;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import objects.Entity;
 import objects.Skin;
@@ -13,7 +18,7 @@ import objects.Skin;
  *A set of utilities.
  * @author Jaca
  */
-public class utils {
+public class Utils {
     private static final Random r = new Random();
 
     /**
@@ -54,7 +59,7 @@ public class utils {
     public static Node getClosest(ObservableList<Node> ol, Node target){
         Node n = ol.get(0);
         for (Node node : ol) {
-            if(utils.getRange(node, target) < utils.getRange(n, target)){
+            if(Utils.getRange(node, target) < Utils.getRange(n, target)){
                 n = node;
             }
         }
@@ -91,7 +96,7 @@ public class utils {
     public static Entity getClosest(ObservableList<Entity> ol, Entity target){
         Entity n = ol.get(0);
         for (Entity node : ol) {
-            if(utils.getRange(node.getIv(), target.getIv()) < utils.getRange(n.getIv(), target.getIv())){
+            if(Utils.getRange(node.getIv(), target.getIv()) < Utils.getRange(n.getIv(), target.getIv())){
                 n = node;
             }
         }
@@ -118,20 +123,29 @@ public class utils {
      */
     public static int[] getRelative(Entity e1, Entity e2){
         int[] result = new int[2];
-        if(e1.getTranslateX() > e2.getTranslateX()){
+        if(e1.getX() > e2.getX()){
             result[0] = 2;
-        }else if (e1.getTranslateX() < e2.getTranslateX()){
+        }else if (e1.getX() < e2.getX()){
             result[0] = 1;
         }else {
             result[0] = 3;
         }
-        if(e1.getTranslateY() > e2.getTranslateY()){
+        if(e1.getY() > e2.getY()){
             result[1] = 2;
-        }else if (e1.getTranslateY() < e2.getTranslateY()){
+        }else if (e1.getY() < e2.getY()){
             result[1] = 1;
         }else {
             result[1] = 3;
         }
         return result;
+    }
+    
+    public static ImageView generateImage(String path){
+        try {
+            return new ImageView(new Image(new File(path).toURI().toURL().toString()));
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }
