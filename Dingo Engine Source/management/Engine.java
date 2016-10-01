@@ -70,7 +70,7 @@ public abstract class Engine {
                 System.exit(0);
             }
         });
-        
+        stage.setResizable(false);
         phy = new Physics() {
 
             @Override

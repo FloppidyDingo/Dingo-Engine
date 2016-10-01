@@ -6,7 +6,7 @@ package motion;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import management.utils;
+import management.Utils;
 import objects.Entity;
 import objects.Person;
 import objects.Spawn;
@@ -561,36 +561,36 @@ public abstract class Physics {
         //<editor-fold defaultstate="collapsed" desc="AI">
         for(Person en : enemyList){
             try {
-                Entity e = utils.getClosest(enemyTargets, en);
-                if((utils.getRange(e.getIv(), en.getIv()) < enemyRange) & en.isActive()){
+                Entity e = Utils.getClosest(enemyTargets, en);
+                if((Utils.getRange(e.getIv(), en.getIv()) < enemyRange) & en.isActive()){
                     if (mode == PLATFORMER) {
-                        switch (utils.getRelative(en, e)[0]) {
-                            case utils.ABOVE_LEFT: {
+                        switch (Utils.getRelative(en, e)[0]) {
+                            case Utils.ABOVE_LEFT: {
                                 en.getDir().applyForce(AISpeed, 0);
                                 break;
                             }
-                            case utils.BELOW_RIGHT: {
+                            case Utils.BELOW_RIGHT: {
                                 en.getDir().applyForce(-AISpeed, 0);
                                 break;
                             }
                         }
                     } else {
-                        switch (utils.getRelative(en, e)[0]) {
-                            case utils.ABOVE_LEFT: {
+                        switch (Utils.getRelative(en, e)[0]) {
+                            case Utils.ABOVE_LEFT: {
                                 en.getDir().applyForce(AISpeed, 0);
                                 break;
                             }
-                            case utils.BELOW_RIGHT: {
+                            case Utils.BELOW_RIGHT: {
                                 en.getDir().applyForce(-AISpeed, 0);
                                 break;
                             }
                         }
-                        switch (utils.getRelative(en, e)[1]) {
-                            case utils.ABOVE_LEFT: {
+                        switch (Utils.getRelative(en, e)[1]) {
+                            case Utils.ABOVE_LEFT: {
                                 en.getDir().applyForce(0, -AISpeed);
                                 break;
                             }
-                            case utils.BELOW_RIGHT: {
+                            case Utils.BELOW_RIGHT: {
                                 en.getDir().applyForce(0, AISpeed);
                                 break;
                             }
@@ -601,11 +601,11 @@ public abstract class Physics {
         }
         for (Person p : personList) {
             if(p.isActive()){
-                if(utils.randInt(1, 10) == 1){
+                if(Utils.randInt(1, 10) == 1){
                     if(mode == PLATFORMER){
                         p.setUserData(-p.getUserData());
                     }else{
-                        p.setUserData(utils.randInt(1, 4));
+                        p.setUserData(Utils.randInt(1, 4));
                     }
                 }
                 if(mode == PLATFORMER){
@@ -673,32 +673,32 @@ public abstract class Physics {
         //camPos.setDirection(camPos.getX() + camDir.getX(), camPos.getY() + camDir.getY());
         camPos.applyForce(camDir);
         for(Entity e : entityList){
-            e.setTranslateX(e.getTranslateX() - camDir.getX());
-            e.setTranslateY(e.getTranslateY() + camDir.getY());
+            e.setX(e.getX() - camDir.getX());
+            e.setY(e.getY() + camDir.getY());
         }
         for(Entity e : objectList){
-            e.setTranslateX(e.getTranslateX() - camDir.getX());
-            e.setTranslateY(e.getTranslateY() + camDir.getY());
+            e.setX(e.getX() - camDir.getX());
+            e.setY(e.getY() + camDir.getY());
         }
         for(Entity e : personList){
-            e.setTranslateX(e.getTranslateX() - camDir.getX());
-            e.setTranslateY(e.getTranslateY() + camDir.getY());
+            e.setX(e.getX() - camDir.getX());
+            e.setY(e.getY() + camDir.getY());
         }
         for(Entity e : personList2){
-            e.setTranslateX(e.getTranslateX() - camDir.getX());
-            e.setTranslateY(e.getTranslateY() + camDir.getY());
+            e.setX(e.getX() - camDir.getX());
+            e.setY(e.getY() + camDir.getY());
         }
         for(Entity e : doorList){
-            e.setTranslateX(e.getTranslateX() - camDir.getX());
-            e.setTranslateY(e.getTranslateY() + camDir.getY());
+            e.setX(e.getX() - camDir.getX());
+            e.setY(e.getY() + camDir.getY());
         }
         for(Entity e : keyList){
-            e.setTranslateX(e.getTranslateX() - camDir.getX());
-            e.setTranslateY(e.getTranslateY() + camDir.getY());
+            e.setX(e.getX() - camDir.getX());
+            e.setY(e.getY() + camDir.getY());
         }
         for(Entity e : enemyList){
-            e.setTranslateX(e.getTranslateX() - camDir.getX());
-            e.setTranslateY(e.getTranslateY() + camDir.getY());
+            e.setX(e.getX() - camDir.getX());
+            e.setY(e.getY() + camDir.getY());
         }
         for(Trigger e : triggerList){
             e.setTranslateX(e.getTranslateX() - camDir.getX());
@@ -713,50 +713,50 @@ public abstract class Physics {
         for (Entity e : entityList) {
             if (e.getMass() != 0) {
                 if (e.getDir().getX() != 0) {
-                    e.setTranslateX((e.getTranslateX() + e.getDir().getX()));
+                    e.setX((e.getX() + e.getDir().getX()));
                 }
                 if (e.getDir().getY() != 0) {
-                    e.setTranslateY((e.getTranslateY() + e.getDir().getY()));
+                    e.setY((e.getY() + e.getDir().getY()));
                 }
             }
         }
         for (Entity e : personList) {
             if (e.getMass() != 0) {
                 if (e.getDir().getX() != 0) {
-                    e.setTranslateX((e.getTranslateX() + e.getDir().getX()));
+                    e.setX((e.getX() + e.getDir().getX()));
                 }
                 if (e.getDir().getY() != 0) {
-                    e.setTranslateY((e.getTranslateY() + e.getDir().getY()));
+                    e.setY((e.getY() + e.getDir().getY()));
                 }
             }
         }
         for (Entity e : personList2) {
             if (e.getMass() != 0) {
                 if (e.getDir().getX() != 0) {
-                    e.setTranslateX((e.getTranslateX() + e.getDir().getX()));
+                    e.setX((e.getX() + e.getDir().getX()));
                 }
                 if (e.getDir().getY() != 0) {
-                    e.setTranslateY((e.getTranslateY() + e.getDir().getY()));
+                    e.setY((e.getY() + e.getDir().getY()));
                 }
             }
         }
         for (Entity e : enemyList) {
             if (e.getMass() != 0) {
                 if (e.getDir().getX() != 0) {
-                    e.setTranslateX((e.getTranslateX() + e.getDir().getX()));
+                    e.setX((e.getX() + e.getDir().getX()));
                 }
                 if (e.getDir().getY() != 0) {
-                    e.setTranslateY((e.getTranslateY() + e.getDir().getY()));
+                    e.setY((e.getY() + e.getDir().getY()));
                 }
             }
         }
         for (Entity e : keyList) {
             if (e.getMass() != 0) {
                 if (e.getDir().getX() != 0) {
-                    e.setTranslateX((e.getTranslateX() + e.getDir().getX()));
+                    e.setX((e.getX() + e.getDir().getX()));
                 }
                 if (e.getDir().getY() != 0) {
-                    e.setTranslateY((e.getTranslateY() + e.getDir().getY()));
+                    e.setY((e.getY() + e.getDir().getY()));
                 }
             }
         }
