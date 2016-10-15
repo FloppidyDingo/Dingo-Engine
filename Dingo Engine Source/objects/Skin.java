@@ -22,7 +22,7 @@ public class Skin {
     
     private Rectangle2D v;
     private ImageView iv;
-    private ObservableList<Rectangle2D> skins;
+    private final ObservableList<Rectangle2D> skins;
     private String ID;
     
     public Skin(){
@@ -90,7 +90,7 @@ public class Skin {
     }
     
     /**
-     *Experimental, do not use until ready.
+     *Generates skin rectangles from a definition image
      * @param url of the Skin Definitions Image
      * @throws IOException
      */
