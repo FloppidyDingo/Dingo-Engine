@@ -35,7 +35,7 @@ public class Loader {
      * @param url The filename of the map
      * @param referenceURL Specifies the map folder
      * @param imageURL Specifies the images folder
-     * @return 
+     * @return The generated Map object
      * @throws management.InvalidVersionException 
     */
     public Map generateMap(String url, String referenceURL, String imageURL) throws InvalidVersionException{
@@ -44,7 +44,7 @@ public class Loader {
         try (BufferedReader br = new BufferedReader(new FileReader(new File(referenceURL + url)))) {
             String cmd = br.readLine();
             if((Integer.parseInt(cmd) > Engine.getMapVersion())){
-                throw new InvalidVersionException("Map designed for newer version of the Dingo Engine, and override is false.");
+                throw new InvalidVersionException("Map designed for newer version of the Dingo Engine.");
             }
             while(cmd != null){
                 switch(cmd){
