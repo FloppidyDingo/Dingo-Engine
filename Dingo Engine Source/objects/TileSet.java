@@ -118,6 +118,14 @@ public class TileSet {
     public void setTileSheet(ImageView iv) {
         this.iv = iv;
     }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
     
     public ImageView getTile(int number){
         Rectangle2D rec = skins.get(number);

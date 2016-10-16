@@ -25,6 +25,8 @@ import objects.Entity;
 import objects.Person;
 import objects.Skin;
 import objects.Spawn;
+import objects.Tile;
+import objects.TileSet;
 import objects.Trigger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -200,6 +202,7 @@ public class XMLLoader {
         private Skin skinField;
         private Animation ani;
         private int version;
+        private TileSet tileField;
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -439,6 +442,59 @@ public class XMLLoader {
                     ani.setRunning(false);
                     break;
                 }
+                case "tileset":{
+                    tileField = new TileSet();
+                    tileField.setID(attributes.getValue("ID"));
+                    tileField.setTileSheet(new ImageView(new Image(new File(imageURL + attributes.getValue("URL")).toURI().toString())));
+                    element = "tileset";
+                    break;
+                }
+                case "solid-tile":{
+                    double x;
+                    double y;
+                    x = Double.parseDouble(attributes.getValue("xpos"));
+                    y = Double.parseDouble(attributes.getValue("ypos"));
+                    String tileset = attributes.getValue("tileset");
+                    TileSet tile = new TileSet();
+                    for (TileSet s : map.getTileSetList()) {
+                        if (s.getID().equals(tileset)) {
+                            tile = s;
+                            break;
+                        }
+                    }
+                    Entity e = new Entity(tile, x, y);
+                    e.setImage(tile.getTile(Integer.parseInt(attributes.getValue("tile-number"))).getImage());
+                    e.setID(attributes.getValue("ID"));
+                    e.setUserData(Integer.parseInt(attributes.getValue("UD")));
+                    e.setMass(Integer.parseInt(attributes.getValue("mass")));
+                    e.setActive(Boolean.parseBoolean(attributes.getValue("actve")));
+                    if (Boolean.parseBoolean(attributes.getValue("door-target"))) {
+                        map.getDoorTargetList().add(e);
+                    }
+                    e.resetRectangles();
+                    map.getEntityList().add(e);
+                    break;
+                }
+                case "tile":{
+                    double x;
+                    double y;
+                    x = Double.parseDouble(attributes.getValue("xpos"));
+                    y = Double.parseDouble(attributes.getValue("ypos"));
+                    String tileset = attributes.getValue("tileset");
+                    TileSet tile = new TileSet();
+                    for (TileSet s : map.getTileSetList()) {
+                        if (s.getID().equals(tileset)) {
+                            tile = s;
+                            break;
+                        }
+                    }
+                    Tile e = new Tile(tile, x, y);
+                    e.setTile(Integer.parseInt(attributes.getValue("tile-number")));
+                    e.setID(attributes.getValue("ID"));
+                    e.setUserData(Integer.parseInt(attributes.getValue("UD")));
+                    map.getTileList().add(e);
+                    break;
+                }
                 case "viewport":{
                     if ("skin".equals(element)) {
                         double x1 = Integer.parseInt(attributes.getValue("x1"));
@@ -446,6 +502,13 @@ public class XMLLoader {
                         double x2 = Integer.parseInt(attributes.getValue("x2"));
                         double y2 = Integer.parseInt(attributes.getValue("y2"));
                         skinField.addFrame(x1, y1, x2, y2);
+                    }
+                    if ("tileset".equals(element)) {
+                        double x1 = Integer.parseInt(attributes.getValue("x1"));
+                        double y1 = Integer.parseInt(attributes.getValue("y1"));
+                        double x2 = Integer.parseInt(attributes.getValue("x2"));
+                        double y2 = Integer.parseInt(attributes.getValue("y2"));
+                        tileField.addFrame(x1, y1, x2, y2);
                     }
                     break;
                 }
@@ -464,6 +527,11 @@ public class XMLLoader {
                     skinField.reset();
                     map.getSkinList().add(skinField);
                     skinField = null;
+                    break;
+                }
+                case "tileset":{
+                    map.getTileSetList().add(tileField);
+                    tileField = null;
                     break;
                 }
                 case "animation":{

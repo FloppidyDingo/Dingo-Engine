@@ -197,6 +197,26 @@ public class Entity {
     }
     
     /**
+     * Creates an Entity as a tile
+     * @param s The Skin object.
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     */
+    public Entity(TileSet s, double x, double y){
+        iv = s.getTile(0);
+        skin = null;
+        userData = 0;
+        this.resetRectangles();
+        r1.setFill(Paint.valueOf("red"));
+        r2.setFill(Paint.valueOf("red"));
+        r3.setFill(Paint.valueOf("red"));
+        r4.setFill(Paint.valueOf("red"));
+        showRectangles(false);
+        this.setX(x);
+        this.setY(y);
+    }
+    
+    /**
      *
      * @param s The Skin object.
      * @param x The x coordinate.
@@ -333,7 +353,7 @@ public class Entity {
     }
     
     /**
-     *Sets the Entity's base Image.
+     *Sets the Entity's Image.
      * @param i
      */
     public void setImage(Image i){

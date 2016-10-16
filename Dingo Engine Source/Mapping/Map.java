@@ -14,6 +14,8 @@ import objects.Entity;
 import objects.Person;
 import objects.Skin;
 import objects.Spawn;
+import objects.Tile;
+import objects.TileSet;
 import objects.Trigger;
 
 /**
@@ -34,6 +36,8 @@ public class Map {
     private ObservableList<Animation> animationList;//list of animations
     private ObservableList<Entity> trigTargetList;//list of names of all the targets for a trigger
     private ObservableList<Entity> doorTargetList;//list of entities that can open doors
+    private ObservableList<TileSet> tileSetList;//list of entities that can open doors
+    private ObservableList<Tile> tileList;//list of entities that can open doors
     private Scene scene;
     private StackPane sp;
 
@@ -68,6 +72,22 @@ public class Map {
     public void setAnimationList(ObservableList<Animation> animationList) {
         this.animationList = animationList;
     }
+
+    public ObservableList<TileSet> getTileSetList() {
+        return tileSetList;
+    }
+
+    public void setTileSetList(ObservableList<TileSet> tileList) {
+        this.tileSetList = tileList;
+    }
+
+    public ObservableList<Tile> getTileList() {
+        return tileList;
+    }
+
+    public void setTileList(ObservableList<Tile> tileList) {
+        this.tileList = tileList;
+    }
     
     public Map() {
         this.entityList = FXCollections.observableArrayList();
@@ -84,6 +104,8 @@ public class Map {
         this.animationList = FXCollections.observableArrayList();
         this.doorList = FXCollections.observableArrayList();
         this.doorTargetList = FXCollections.observableArrayList();
+        this.tileSetList = FXCollections.observableArrayList();
+        this.tileList = FXCollections.observableArrayList();
     }
     
     public Entity getEntity(String ID){
@@ -196,6 +218,24 @@ public class Map {
     
     public Entity getDoorTarget(String ID){
         for (Entity col : doorTargetList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public TileSet getTileSet(String ID){
+        for (TileSet col : tileSetList) {
+            if (col.getID().equals(ID)) {
+                return col;
+            }
+        }
+        return null;
+    }
+    
+    public Tile getTile(String ID){
+        for (Tile col : tileList) {
             if (col.getID().equals(ID)) {
                 return col;
             }
@@ -319,6 +359,9 @@ public class Map {
         }
         for (Trigger e : triggerList) {
             sp.getChildren().add(e);
+        }
+        for (Tile e : tileList) {
+            e.addToParent(sp);
         }
         scene = new Scene(sp, WindowSizeX, WindowSizeY);
         return scene;
