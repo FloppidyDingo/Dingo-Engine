@@ -15,34 +15,47 @@ import javafx.collections.ObservableList;
  *
  * @author James
  */
-public class MediaPipeline {
+public class MediaPipeline extends Thread{
     private Connector videoSource;
     private Connector audioSource;
     private AudioDriver audio;
     private VideoNode video;
     private final ObservableList<Codec> audioCodecs;
     private final ObservableList<Codec> videoCodecs;
+    private volatile boolean running;
+    private int req;
 
     public MediaPipeline() {
         audioCodecs = javafx.collections.FXCollections.observableArrayList();
         videoCodecs = javafx.collections.FXCollections.observableArrayList();
     }
     
-    public void process(){
-        FXCollections.sort(audioCodecs, Comparator.comparing(Codec::getOrder));
-        FXCollections.sort(videoCodecs, Comparator.comparing(Codec::getOrder));
-        audioCodecs.stream().forEach((c) -> {
-            c.process();
-        });
-        videoCodecs.stream().forEach((c) -> {
-            c.process();
-        });
-        if (audio != null) {
-            audio.update();
+    @Override
+    public void run(){
+        System.out.println("MME Started");
+        running = true;
+        while (running) {
+            if (req > 0) {
+                req --;
+                audioCodecs.stream().forEach((c) -> {
+                    c.process();
+                });
+                videoCodecs.stream().forEach((c) -> {
+                    c.process();
+                });
+                if (audio != null) {
+                    audio.update();
+                }
+                if (video != null) {
+                    video.update();
+                }
+            }
         }
-        if (video != null) {
-            video.update();
-        }
+        System.out.println("MME Stopped");
+    }
+    
+    public synchronized void process(){
+        req ++;
     }
 
     public Connector getVideoSource() {
@@ -79,17 +92,36 @@ public class MediaPipeline {
     
     public void addAudioCodec(Codec c){
         audioCodecs.add(c);
+        sort();
     }
     
     public void removeAudioCodec(Codec c){
         audioCodecs.remove(c);
+        sort();
     }
     
     public void addVideoCodec(Codec c){
         videoCodecs.add(c);
+        sort();
     }
     
     public void removeVideoCodec(Codec c){
         videoCodecs.remove(c);
+        sort();
+    }
+    
+    private void sort(){
+        FXCollections.sort(audioCodecs, Comparator.comparing(Codec::getOrder));
+        FXCollections.sort(videoCodecs, Comparator.comparing(Codec::getOrder));
+    }
+    
+    public void halt(){
+        if(audio != null){
+            audio.stop();
+        }
+        if(video != null){
+            video.stop();
+        }
+        running = false;
     }
 }

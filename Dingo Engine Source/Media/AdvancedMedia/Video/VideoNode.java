@@ -39,4 +39,6 @@ public abstract class VideoNode extends ImageView{
         resX = w;
         resY = h;
     }
+    
+    public abstract void stop();
 }

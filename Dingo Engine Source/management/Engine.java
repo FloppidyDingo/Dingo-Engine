@@ -25,7 +25,7 @@ import objects.Spawn;
  */
 public abstract class Engine {
     private static final int MapVersion = 1;
-    private static final String version = "1.3.2";
+    private static final String version = "1.5.0";
     private int fps;
     private ObservableList<Extension> extensions;
     private ObservableList<KeyMap> keys;
@@ -45,6 +45,7 @@ public abstract class Engine {
      *The physics engine object. You reference this to make changes to the physics engine.
      */
     public Physics phy;
+    private int preComputedRate;
 
     /**
      *call this to start the engine
@@ -61,12 +62,13 @@ public abstract class Engine {
         extensions = javafx.collections.FXCollections.observableArrayList();
         keys = javafx.collections.FXCollections.observableArrayList();
         stage = new Stage();
-        Scene s = new Scene(new Pane(), 500, 500);
+        Scene s = new Scene(new Pane(), 1, 1);
         stage.setScene(s);
         stage.show();
         stage.setOnCloseRequest(new EventHandler() {
             @Override
             public void handle(Event event) {
+                media.halt();
                 System.exit(0);
             }
         });
@@ -122,8 +124,13 @@ public abstract class Engine {
         DingoSoundDriver DSD = new DingoSoundDriver();
         DSD.init(sampleRate, bitDepth, (sampleRate / fps) * (bitDepth / 8));
         media.setAudio(DSD);
+        media.start();
+        preComputedRate = sampleRate * (bitDepth / 8);
     }
     
+    public int getComputedMediaBufferSize(){
+        return preComputedRate / fps * 2;
+    }
     /**
      *returns the compatible map structure version
      * @return
@@ -176,7 +183,7 @@ public abstract class Engine {
     private void frame2(){
         phy.check();
         Animation.nextFrames();
-        if(media != null){
+        if (media != null) {
             media.process();
         }
         TimeQueue.masterCheck();

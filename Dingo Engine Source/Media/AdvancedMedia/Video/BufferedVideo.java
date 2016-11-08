@@ -25,4 +25,9 @@ public class BufferedVideo extends VideoNode{
         }
         this.setImage(wr);
     }
+
+    @Override
+    public void stop() {
+        
+    }
 }
