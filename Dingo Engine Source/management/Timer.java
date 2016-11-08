@@ -16,7 +16,7 @@ import javafx.application.Platform;
  * @author Jaca
  */
 public abstract class Timer {
-    private javax.swing.Timer t;
+    private final javax.swing.Timer t;
     
     /**
      *
