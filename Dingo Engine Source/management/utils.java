@@ -140,12 +140,7 @@ public class Utils {
         return result;
     }
     
-    public static ImageView generateImage(String path){
-        try {
-            return new ImageView(new Image(new File(path).toURI().toURL().toString()));
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+    public static ImageView generateImage(String path) throws MalformedURLException{
+        return new ImageView(new Image(new File(path).toURI().toURL().toString()));
     }
 }
